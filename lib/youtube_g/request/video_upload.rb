@@ -43,21 +43,32 @@ class YouTubeG
                   :category => '',
                   :keywords => [] }.merge(opts)
 
-        uploadBody = generate_upload_body(boundary, video_xml, data)
+        upload_body = generate_upload_body(boundary, video_xml, data)
 
-        uploadHeader = {
-          "Authorization"  => "GoogleLogin auth=#{auth_token}",
-          "X-GData-Client" => "#{@client_id}",
-          "X-GData-Key"    => "key=#{@dev_key}",
-          "Slug"           => "#{@opts[:filename]}",
-          "Content-Type"   => "multipart/related; boundary=#{boundary}",
-          "Content-Length" => "#{uploadBody.length}"
+        upload_header = {
+        "Authorization"  => "GoogleLogin auth=#{auth_token}",
+        "X-GData-Client" => "#{@client_id}",
+        "X-GData-Key"    => "key=#{@dev_key}",
+        "Slug"           => "#{@opts[:filename]}",
+        "Content-Type"   => "multipart/related; boundary=#{boundary}",
+        "Content-Length" => "#{upload_body.length}",
         }
+        puts("MSP upload_header [#{upload_header}]")
+
+        direct_upload_url = "/feeds/api/users/#{@user}/uploads"
+        puts("MSP direct_upload_url [#{direct_upload_url}]")
 
         Net::HTTP.start(base_url) do |upload|
-          response = upload.post('/feeds/api/users/' << @user << '/uploads', uploadBody, uploadHeader)
+          response = upload.post(direct_upload_url, upload_body, upload_header)
           xml = REXML::Document.new(response.body)
-          return xml.elements["//id"].text[/videos\/(.+)/, 1]
+          if (xml.elements["//id"])
+            puts("MSP response xml [#{xml}]")
+            return xml.elements["//id"].text[/videos\/(.+)/, 1]
+          else
+            return xml
+          end
+
+
         end
 
       end
@@ -77,11 +88,14 @@ class YouTubeG
           http = Net::HTTP.new("www.google.com", 443)
           http.use_ssl = true
           body = "Email=#{CGI::escape @user}&Passwd=#{CGI::escape @pass}&service=youtube&source=#{CGI::escape @client_id}"
+          puts("MSP auth body [#{body}]")
           response = http.post("/youtube/accounts/ClientLogin", body, "Content-Type" => "application/x-www-form-urlencoded")
-          raise UploadError, response.body[/Error=(.+)/,1] if response.code.to_i != 200
+          raise UploadError, "MSP "+response.body[/Error=(.+)/,1] if response.code.to_i != 200
+          puts("MSP response.body [#{response.body}]")
           @auth_token = response.body[/Auth=(.+)/, 1]
 
         end
+        puts "MSP auth_token [#{@auth_token}]"
         @auth_token
       end
 
@@ -97,14 +111,14 @@ class YouTubeG
       end
 
       def generate_upload_body(boundary, video_xml, data)
-        uploadBody = ""
-        uploadBody << "--#{boundary}\r\n"
-        uploadBody << "Content-Type: application/atom+xml; charset=UTF-8\r\n\r\n"
-        uploadBody << video_xml
-        uploadBody << "\r\n--#{boundary}\r\n"
-        uploadBody << "Content-Type: #{@opts[:mime_type]}\r\nContent-Transfer-Encoding: binary\r\n\r\n"
-        uploadBody << data
-        uploadBody << "\r\n--#{boundary}--\r\n"
+        upload_body = ""
+        upload_body << "--#{boundary}\r\n"
+        upload_body << "Content-Type: application/atom+xml; charset=UTF-8\r\n\r\n"
+        upload_body << video_xml
+        upload_body << "\r\n--#{boundary}\r\n"
+        upload_body << "Content-Type: #{@opts[:mime_type]}\r\nContent-Transfer-Encoding: binary\r\n\r\n"
+        upload_body << data
+        upload_body << "\r\n--#{boundary}--\r\n"
       end
 
     end
