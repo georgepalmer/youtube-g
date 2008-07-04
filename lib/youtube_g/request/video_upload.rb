@@ -24,7 +24,7 @@ class YouTubeG
         @user, @pass, @dev_key, @client_id, @auth_token = user, pass, dev_key, client_id, auth_token
       end         
         
-      # TODO merge this in with logger.rb or replace looger.rb
+      # TODO merge this in with logger.rb or replace logger.rb
       def logger      
         if not Object.const_defined?(get_rails_default_logger_name)
            Logger.new(STDOUT)
