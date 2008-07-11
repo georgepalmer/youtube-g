@@ -20,6 +20,7 @@ class YouTubeG
     class VideoUpload
       
       attr_accessor :auth_token
+
       def initialize user, pass, dev_key, client_id = 'youtube_g', auth_token = nil
         @user, @pass, @dev_key, @client_id, @auth_token = user, pass, dev_key, client_id, auth_token
       end         
@@ -83,16 +84,9 @@ class YouTubeG
           response = upload.post(direct_upload_url, upload_body, upload_header)
           if response.code.to_i == 403
             raise AuthenticationError, response.body[/<TITLE>(.+)<\/TITLE>/, 1]
-          elsif response.code.to_i != 201
-            upload_error = ''
-            xml = REXML::Document.new(response.body)
-            errors = xml.elements["//errors"]
-            errors.each do |error|
-              location = error.elements["location"].text[/media:group\/media:(.*)\/text\(\)/,1]
-              code = error.elements["code"].text
-              upload_error << sprintf("%s: %s\r\n", location, code)
-            end
-            raise UploadError, upload_error
+          elsif response.code.to_i != 201    
+            upload_errors = YouTubeG::Parser::UploadErrorParser.new(response.body).parse
+            raise UploadError, upload_errors.inspect
           end
         end
 
@@ -115,7 +109,7 @@ class YouTubeG
           body = "Email=#{CGI::escape @user}&Passwd=#{CGI::escape @pass}&service=youtube&source=#{CGI::escape @client_id}"
           logger.debug("auth body [#{body}]")
           response = http.post("/youtube/accounts/ClientLogin", body, "Content-Type" => "application/x-www-form-urlencoded")
-          raise UploadError, ""+response.body[/Error=(.+)/,1] if response.code.to_i != 200
+          raise UploadError, response.body[/Error=(.+)/,1] if response.code.to_i != 200
           logger.debug("response.body [#{response.body}]")
           @auth_token = response.body[/Auth=(.+)/, 1]
 

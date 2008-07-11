@@ -3,7 +3,9 @@ require 'open-uri'
 require 'rexml/document'
 
 class YouTubeG
-  module Parser
+  module Parser      
+    class FeedParserError < Exception; end
+      
     class FeedParser
       def initialize(url)
         @url = url
@@ -13,7 +15,27 @@ class YouTubeG
         parse_content open(@url).read
       end      
     end
-
+     
+    class UploadErrorParser   
+      def initialize(xml)
+        raise YouTubeG::Parser::FeedParserError.new("You must pass some xml") if xml == ''
+        @doc = REXML::Document.new(xml)         
+      end 
+      
+      def parse
+        upload_errors = []
+                         
+        @doc.elements.each("//error") do |error|
+          location = error.elements["location"].text   #[/media:group\/media:(.*)\/text\(\)/,1]
+          code = error.elements["code"].text                   
+          domain = error.elements["domain"].text            
+          upload_errors << YouTubeG::Model::UploadError.new(:location => location, :code => code, :domain => domain)
+        end                                    
+        
+        return upload_errors
+      end   
+    end
+    
     class VideoFeedParser < FeedParser
       
       def parse_content(content)
@@ -160,6 +182,6 @@ class YouTubeG
           :videos => videos)
       end
     end
-    
+      
   end 
 end
