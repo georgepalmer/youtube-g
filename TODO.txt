@@ -1,4 +1,4 @@
-[ ] stub out http request/response cycle for tests (partially done in test_upload, need to do the same for pre-existing tests [msp])
+[ ] stub out http request/response cycle for tests (partially done in test_parser, need to do the same for pre-existing tests [msp])
 [ ] consider defaulting the client to no-logger, rather than outputting to STDOUT.
 [ ] allow specifying values as single items where you don't need to wrap in a list, e.g. :tags => :chickens instead of :tags => [ 'chickens' ]
 [ ] make sure symbols will work as well as tags everywhere (again, :tags => :chickens is same as :tags => 'chickens')

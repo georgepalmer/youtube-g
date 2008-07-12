@@ -1,6 +1,7 @@
 == trunk
 * Move network dependent tests to integration-test [msp]
 * Create a parser and a model for upload errors  [msp]
+* Stub driven tests for VideoFeedParser, VideosFeedParser, UploadErrorParser [msp]
 * Add error-handling for video upload errors. [FiXato]
 * Add error-handling for authentication errors from YouTube during video upload. [FiXato]
 * Add support for making videos private upon video upload. [FiXato]

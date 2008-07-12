@@ -26,3 +26,5 @@ integration-test/test_video.rb
 integration-test/test_video_search.rb
 test/test_parser.rb
 test/test_upload.rb
+test/search.xml
+test/upload.xml
