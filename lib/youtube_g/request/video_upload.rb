@@ -31,7 +31,7 @@ class YouTubeG
            Logger.new(STDOUT)
         else
            eval(get_rails_default_logger_name)
-        end
+        end                                                                                                             
       end  
       
       def get_rails_default_logger_name
@@ -82,15 +82,18 @@ class YouTubeG
 
         Net::HTTP.start(base_url) do |upload|
           response = upload.post(direct_upload_url, upload_body, upload_header)
-          if response.code.to_i == 403
+          # todo parse this out also
+          if response.code.to_i == 403                      
             raise AuthenticationError, response.body[/<TITLE>(.+)<\/TITLE>/, 1]
           elsif response.code.to_i != 201    
             upload_errors = YouTubeG::Parser::UploadErrorParser.new(response.body).parse
             raise UploadError, upload_errors.inspect
-          end
+          end 
+          return YouTubeG::Parser::VideoFeedParser.new(response.body).parse
         end
 
-      end
+      end   
+      
 
       private
 

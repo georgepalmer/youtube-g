@@ -6,14 +6,30 @@ class YouTubeG
   module Parser      
     class FeedParserError < Exception; end
       
-    class FeedParser
-      def initialize(url)
-        @url = url
+    class FeedParser    
+      attr_reader :url_based
+      alias :url_based? :url_based
+
+      def initialize(arg)                    
+        @url_based = assert_valid_url(arg)
+        @content = arg
       end
       
-      def parse
-        parse_content open(@url).read
-      end      
+      def parse                
+        if @url_based
+          parse_content open(@content).read 
+        else
+          parse_content @content  
+        end
+      end  
+      
+      private
+      def assert_valid_url (url)
+        URI::parse(url)
+        return true
+      rescue
+        return false
+      end          
     end
      
     class UploadErrorParser   
@@ -49,7 +65,15 @@ class YouTubeG
       def parse_entry(entry)
         video_id = entry.elements["id"].text
         published_at = Time.parse(entry.elements["published"].text)
-        updated_at = Time.parse(entry.elements["updated"].text)
+        updated_at = Time.parse(entry.elements["updated"].text)           
+                              
+        app_control_element = entry.elements["app:control"]     
+        app_contrlol = nil
+        if app_control_element
+          app_control = YouTubeG::Model::Video::AppControl.new(
+                     :draft => app_control_element.elements["app:draft"].text,
+                     :state => app_control_element.elements["yt:state"].attributes["name"])
+        end        
 
         # parse the category and keyword lists
         categories = []
@@ -83,14 +107,14 @@ class YouTubeG
       
         media_group = entry.elements["media:group"]
         description = media_group.elements["media:description"].text
-        duration = media_group.elements["yt:duration"].attributes["seconds"].to_i
+        duration = media_group.elements["yt:duration"].attributes["seconds"].to_i if media_group.elements["yt:duration"]
 
         media_content = []
         media_group.elements.each("media:content") do |mce|
           media_content << parse_media_content(mce)
         end
 
-        player_url = media_group.elements["media:player"].attributes["url"]
+        player_url = media_group.elements["media:player"].attributes["url"] if media_group.elements["media:player"]
 
         # parse thumbnails
         thumbnails = []
@@ -121,7 +145,8 @@ class YouTubeG
         YouTubeG::Model::Video.new(
           :video_id => video_id,
           :published_at => published_at,
-          :updated_at => updated_at,
+          :updated_at => updated_at, 
+          :app_control => app_control,
           :categories => categories,
           :keywords => keywords,
           :title => title,
@@ -153,7 +178,7 @@ class YouTubeG
           :mime_type => mime_type,
           :default => default)
       end      
-    end
+    end   
 
     class VideosFeedParser < VideoFeedParser
 

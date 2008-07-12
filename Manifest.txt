@@ -15,11 +15,14 @@ lib/youtube_g/model/rating.rb
 lib/youtube_g/model/thumbnail.rb
 lib/youtube_g/model/user.rb
 lib/youtube_g/model/video.rb
+lib/youtube_g/model/upload_error.rb
 lib/youtube_g/parser.rb
 lib/youtube_g/record.rb
 lib/youtube_g/request/video_search.rb
 lib/youtube_g/request/video_upload.rb
 lib/youtube_g/response/video_search.rb
-test/test_client.rb
-test/test_video.rb
-test/test_video_search.rb
+integration-test/test_client.rb
+integration-test/test_video.rb
+integration-test/test_video_search.rb
+test/test_parser.rb
+test/test_upload.rb

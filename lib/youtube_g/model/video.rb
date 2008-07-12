@@ -34,13 +34,22 @@ class YouTubeG
         SWF = YouTubeG::Model::Video::Format.new(5, :swf)
         
         THREE_GPP = YouTubeG::Model::Video::Format.new(6, :three_gpp)
+      end 
+       
+      
+      # Used in video uploads only to check the state of the upload
+      class AppControl < YouTubeG::Record
+         attr_reader :draft
+         attr_reader :state
       end
-
+            
       attr_reader :duration
       attr_reader :noembed
       attr_reader :position
       attr_reader :racy
       attr_reader :statistics
+      
+      attr_reader :app_control
       
       attr_reader :video_id
       attr_reader :published_at

@@ -1,0 +1,66 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<feed xmlns='http://www.w3.org/2005/Atom' xmlns:openSearch='http://a9.com/-/spec/opensearchrss/1.0/'
+      xmlns:gml='http://www.opengis.net/gml' xmlns:georss='http://www.georss.org/georss'
+      xmlns:media='http://search.yahoo.com/mrss/' xmlns:yt='http://gdata.youtube.com/schemas/2007'
+      xmlns:gd='http://schemas.google.com/g/2005'>
+  <id>http://gdata.youtube.com/feeds/api/users/speechboxmatt/uploads</id>
+  <updated>2008-06-28T16:34:33.062Z</updated>
+  <category scheme='http://schemas.google.com/g/2005#kind' term='http://gdata.youtube.com/schemas/2007#video'/>
+  <title type='text'>Videos of speechboxmatt</title>
+  <logo>http://www.youtube.com/img/pic_youtubelogo_123x63.gif</logo>
+  <link rel='related' type='application/atom+xml' href='http://gdata.youtube.com/feeds/api/users/speechboxmatt'/>
+  <link rel='alternate' type='text/html' href='http://www.youtube.com/profile_videos?user=speechboxmatt'/>
+  <link rel='http://schemas.google.com/g/2005#feed' type='application/atom+xml'
+        href='http://gdata.youtube.com/feeds/api/users/speechboxmatt/uploads'/>
+  <link rel='self' type='application/atom+xml'
+        href='http://gdata.youtube.com/feeds/api/users/speechboxmatt/uploads?start-index=1&amp;max-results=25'/>
+  <author>
+    <name>speechboxmatt</name>
+    <uri>http://gdata.youtube.com/feeds/api/users/speechboxmatt</uri>
+  </author>
+  <generator version='beta' uri='http://gdata.youtube.com/'>YouTube data API</generator>
+  <openSearch:totalResults>1</openSearch:totalResults>
+  <openSearch:startIndex>1</openSearch:startIndex>
+  <openSearch:itemsPerPage>25</openSearch:itemsPerPage>
+  <entry>
+    <id>http://gdata.youtube.com/feeds/api/videos/32_mQ0PRT9I</id>
+    <published>2008-06-28T09:01:58.000-07:00</published>
+    <updated>2008-06-28T09:03:18.000-07:00</updated>
+    <category scheme='http://gdata.youtube.com/schemas/2007/categories.cat' term='People' label='People &amp; Blogs'/>
+    <category scheme='http://schemas.google.com/g/2005#kind' term='http://gdata.youtube.com/schemas/2007#video'/>
+    <category scheme='http://gdata.youtube.com/schemas/2007/keywords.cat' term='test'/>
+    <category scheme='http://gdata.youtube.com/schemas/2007/keywords.cat' term='blah'/>
+    <category scheme='http://gdata.youtube.com/schemas/2007/keywords.cat' term='cool'/>
+    <title type='text'>Speechbox Test</title>
+    <content type='text'>Speechbox test Uploaded on 06/28/2008 at 05:01PM</content>
+    <link rel='alternate' type='text/html' href='http://www.youtube.com/watch?v=32_mQ0PRT9I'/>
+    <link rel='http://gdata.youtube.com/schemas/2007#video.responses' type='application/atom+xml'
+          href='http://gdata.youtube.com/feeds/api/videos/32_mQ0PRT9I/responses'/>
+    <link rel='http://gdata.youtube.com/schemas/2007#video.related' type='application/atom+xml'
+          href='http://gdata.youtube.com/feeds/api/videos/32_mQ0PRT9I/related'/>
+    <link rel='self' type='application/atom+xml'
+          href='http://gdata.youtube.com/feeds/api/users/speechboxmatt/uploads/32_mQ0PRT9I'/>
+    <author>
+      <name>speechboxmatt</name>
+      <uri>http://gdata.youtube.com/feeds/api/users/speechboxmatt</uri>
+    </author>
+    <media:group>
+      <media:title type='plain'>Speechbox Test</media:title>
+      <media:description type='plain'>Speechbox test Uploaded on 06/28/2008 at 05:01PM</media:description>
+      <media:keywords>blah, cool, test</media:keywords>
+      <yt:duration seconds='15'/>
+      <media:category label='People &amp; Blogs' scheme='http://gdata.youtube.com/schemas/2007/categories.cat'>People
+      </media:category>
+      <media:content url='http://www.youtube.com/v/32_mQ0PRT9I' type='application/x-shockwave-flash' medium='video'
+                     isDefault='true' expression='full' duration='15' yt:format='5'/>
+      <media:player url='http://www.youtube.com/watch?v=32_mQ0PRT9I'/>
+      <media:thumbnail url='http://img.youtube.com/vi/32_mQ0PRT9I/2.jpg' height='97' width='130' time='00:00:07.500'/>
+      <media:thumbnail url='http://img.youtube.com/vi/32_mQ0PRT9I/1.jpg' height='97' width='130' time='00:00:03.750'/>
+      <media:thumbnail url='http://img.youtube.com/vi/32_mQ0PRT9I/3.jpg' height='97' width='130' time='00:00:11.250'/>
+      <media:thumbnail url='http://img.youtube.com/vi/32_mQ0PRT9I/0.jpg' height='240' width='320' time='00:00:07.500'/>
+    </media:group>
+    <gd:comments>
+      <gd:feedLink href='http://gdata.youtube.com/feeds/api/videos/32_mQ0PRT9I/comments' countHint='0'/>
+    </gd:comments>
+  </entry>
+</feed>
