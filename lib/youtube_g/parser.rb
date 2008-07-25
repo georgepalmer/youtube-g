@@ -1,15 +1,12 @@
-require 'cgi'
-require 'open-uri'
-require 'rexml/document'
-
 class YouTubeG
-  module Parser      
-    class FeedParserError < Exception; end
+  module Parser #:nodoc:      
+    class FeedParserError < Exception; end #:nodoc:
       
-    class FeedParser    
+    class FeedParser #:nodoc:   
       attr_reader :url_based
       alias :url_based? :url_based
-
+       
+      # Accept a URL or a string assumed to be XML.
       def initialize(arg)                    
         @url_based = assert_valid_url(arg)
         @content = arg
@@ -32,7 +29,7 @@ class YouTubeG
       end          
     end
      
-    class UploadErrorParser   
+    class UploadErrorParser #:nodoc:   
       def initialize(xml)
         raise YouTubeG::Parser::FeedParserError.new("You must pass some xml") if xml == ''
         @doc = REXML::Document.new(xml)         
@@ -51,24 +48,23 @@ class YouTubeG
         return upload_errors
       end   
     end
-    
-    class VideoFeedParser < FeedParser
+
+    class VideoFeedParser < FeedParser #:nodoc:
       
       def parse_content(content)
         doc = REXML::Document.new(content)
         entry = doc.elements["entry"]
-        
         parse_entry(entry)
       end
 
     protected
-      def parse_entry(entry)
+      def parse_entry(entry) 
         video_id = entry.elements["id"].text
         published_at = Time.parse(entry.elements["published"].text)
         updated_at = Time.parse(entry.elements["updated"].text)           
                               
         app_control_element = entry.elements["app:control"]     
-        app_contrlol = nil
+        app_control = nil
         if app_control_element
           app_control = YouTubeG::Model::Video::AppControl.new(
                      :draft => app_control_element.elements["app:draft"].text,
@@ -140,7 +136,7 @@ class YouTubeG
         view_count = (el = entry.elements["yt:statistics"]) ? el.attributes["viewCount"].to_i : 0
 
         noembed = entry.elements["yt:noembed"] ? true : false
-        racy = entry.elements["yt:racy"] ? true : false
+        racy = entry.elements["media:rating"] ? true : false
 
         YouTubeG::Model::Video.new(
           :video_id => video_id,
@@ -163,7 +159,7 @@ class YouTubeG
           :racy => racy)
       end
 
-      def parse_media_content (media_content_element)
+      def parse_media_content (media_content_element) 
         content_url = media_content_element.attributes["url"]
         format_code = media_content_element.attributes["yt:format"].to_i
         format = YouTubeG::Model::Video::Format.by_code(format_code)
@@ -180,10 +176,10 @@ class YouTubeG
       end      
     end   
 
-    class VideosFeedParser < VideoFeedParser
+    class VideosFeedParser < VideoFeedParser #:nodoc:
 
     private
-      def parse_content(content)
+      def parse_content(content) #:nodoc:
         doc = REXML::Document.new(content)
         feed = doc.elements["feed"]
 

@@ -1,5 +1,15 @@
 == trunk
 * Move network dependent tests to integration-test [msp]
+* Create a parser and a model for upload errors [msp]
+* Stub driven tests for VideoFeedParser, VideosFeedParser, UploadErrorParser [msp]
+* Added :page and :per_page options, this allows easier usage of the will_paginate
+  plugin with the library. The :offset and :max_results options are no longer available. [Daniel Insley]
+* Added ability to get video responses on the instances of the YouTube::Model::Video object. [Daniel Insley]
+* Added and improved the existing documentation [Daniel Insley]
+* Fixed usage of deprecated yt:racy, now using media:rating [Daniel Insley]
+* Renamed can_embed? method to embeddable? [Daniel Insley]
+* Added ability for padingation and ordering on standard feeds. [Daniel Insley]
+* Move network dependent tests to integration-test [msp]
 * Create a parser and a model for upload errors  [msp]
 * Stub driven tests for VideoFeedParser, VideosFeedParser, UploadErrorParser [msp]
 * Add error-handling for video upload errors. [FiXato]

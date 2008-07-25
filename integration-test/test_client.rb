@@ -12,7 +12,7 @@ class TestClient < Test::Unit::TestCase
   def test_should_respond_to_a_basic_query
     response = @client.videos_by(:query => "penguin")
   
-    assert_equal "http://gdata.youtube.com/feeds/api/videos?start-index=1&max-results=25&vq=penguin", response.feed_id
+    assert_equal "http://gdata.youtube.com/feeds/api/videos", response.feed_id
     assert_equal 25, response.max_result_count
     assert_equal 25, response.videos.length
     assert_equal 1, response.offset
@@ -22,10 +22,41 @@ class TestClient < Test::Unit::TestCase
     response.videos.each { |v| assert_valid_video v }
   end
   
+    def test_should_respond_to_a_basic_query_with_offset_and_max_results
+    response = @client.videos_by(:query => "penguin", :offset => 15, :max_results => 30)
+  
+    assert_equal "http://gdata.youtube.com/feeds/api/videos", response.feed_id
+    assert_equal 30, response.max_result_count
+    assert_equal 30, response.videos.length
+    assert_equal 15, response.offset
+    assert(response.total_result_count > 100)
+    assert_instance_of Time, response.updated_at
+  
+    response.videos.each { |v| assert_valid_video v }
+  end
+  
+  def test_should_respond_to_a_basic_query_with_paging
+    response = @client.videos_by(:query => "penguin") 
+    assert_equal "http://gdata.youtube.com/feeds/api/videos", response.feed_id
+    assert_equal 25, response.max_result_count
+    assert_equal 1, response.offset
+
+    response = @client.videos_by(:query => "penguin", :page => 2) 
+    assert_equal "http://gdata.youtube.com/feeds/api/videos", response.feed_id
+    assert_equal 25, response.max_result_count
+    assert_equal 26, response.offset
+    
+    response2 = @client.videos_by(:query => "penguin", :page => 3) 
+    assert_equal "http://gdata.youtube.com/feeds/api/videos", response2.feed_id
+    assert_equal 25, response2.max_result_count
+    assert_equal 51, response2.offset
+  end
+  
+  
   def test_should_get_videos_for_multiword_metasearch_query
     response = @client.videos_by(:query => 'christina ricci')
   
-    assert_equal "http://gdata.youtube.com/feeds/api/videos?start-index=1&max-results=25&vq=christina+ricci", response.feed_id
+    assert_equal "http://gdata.youtube.com/feeds/api/videos", response.feed_id
     assert_equal 25, response.max_result_count
     assert_equal 25, response.videos.length
     assert_equal 1, response.offset
@@ -109,19 +140,18 @@ class TestClient < Test::Unit::TestCase
   # end
   
   def test_should_get_videos_for_query_search_with_categories_excluded
-    response = @client.videos_by(:query => 'bench press', :categories => { :exclude => [:comedy, :entertainment] },
-                                 :max_results => 10)
-    assert_equal "<object width=\"425\" height=\"350\">\n  <param name=\"movie\" value=\"http://www.youtube.com/v/BlDWdfTAx8o\"></param>\n  <param name=\"wmode\" value=\"transparent\"></param>\n  <embed src=\"http://www.youtube.com/v/BlDWdfTAx8o\" type=\"application/x-shockwave-flash\" \n   wmode=\"transparent\" width=\"425\" height=\"350\"></embed>\n</object>\n", response.videos.first.embed_html
-    response.videos.each { |v| assert_valid_video v }
-  end
-  
-  def test_should_be_able_to_pass_in_logger
-    @client = YouTubeG::Client.new(Logger.new(STDOUT))
-    assert_not_nil @client.logger
+    video = @client.video_by("EkF4JD2rO3Q")
+    assert_equal "<object width=\"425\" height=\"350\">\n  <param name=\"movie\" value=\"http://www.youtube.com/v/EkF4JD2rO3Q\"></param>\n  <param name=\"wmode\" value=\"transparent\"></param>\n  <embed src=\"http://www.youtube.com/v/EkF4JD2rO3Q\" type=\"application/x-shockwave-flash\" \n   wmode=\"transparent\" width=\"425\" height=\"350\"></embed>\n</object>\n", video.embed_html
+    assert_valid_video video
   end
 
-  def test_should_create_logger_if_not_passed_in
+  def test_should_disable_debug_if_debug_is_set_to_false
     @client = YouTubeG::Client.new
+    assert_nil @client.logger
+  end
+  
+  def test_should_enable_logger_if_debug_is_true
+    @client = YouTubeG::Client.new(true)
     assert_not_nil @client.logger
   end
   
@@ -129,14 +159,14 @@ class TestClient < Test::Unit::TestCase
     response = @client.videos_by(:query => "avril lavigne girlfriend")
   
     video = response.videos.first
-    assert !video.can_embed?
+    assert !video.embeddable?
   end
 
   def test_should_determine_if_embeddable_video_is_embeddable
     response = @client.videos_by(:query => "strongbad")
   
     video = response.videos.first
-    assert video.can_embed?
+    assert video.embeddable?
   end
   
   def test_should_retrieve_video_by_id

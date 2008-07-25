@@ -1,8 +1,3 @@
-require 'net/https'
-require 'digest/md5'
-require 'rexml/document'
-require 'cgi'
-
 class YouTubeG
 
   module Upload
@@ -97,15 +92,15 @@ class YouTubeG
 
       private
 
-      def base_url
+      def base_url #:nodoc:
         "uploads.gdata.youtube.com"
       end
 
-      def boundary
+      def boundary #:nodoc:
         "An43094fu"
       end
 
-      def derive_auth_token     
+      def derive_auth_token #:nodoc:    
         unless @auth_token
           http = Net::HTTP.new("www.google.com", 443)
           http.use_ssl = true
@@ -121,7 +116,7 @@ class YouTubeG
         @auth_token
       end
 
-      def video_xml
+      def video_xml #:nodoc:
         video_xml = ''
         video_xml << '<?xml version="1.0"?>'
         video_xml << '<entry xmlns="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/" xmlns:yt="http://gdata.youtube.com/schemas/2007">'
@@ -135,17 +130,17 @@ class YouTubeG
         video_xml << '</entry>'
       end
 
-      def generate_upload_body(boundary, video_xml, data)
-        upload_body = ""
-        upload_body << "--#{boundary}\r\n"
-        upload_body << "Content-Type: application/atom+xml; charset=UTF-8\r\n\r\n"
-        upload_body << video_xml
-        upload_body << "\r\n--#{boundary}\r\n"
-        upload_body << "Content-Type: #{@opts[:mime_type]}\r\nContent-Transfer-Encoding: binary\r\n\r\n"
-        upload_body << data
-        upload_body << "\r\n--#{boundary}--\r\n"
-      end      
-     
+      def generate_upload_body(boundary, video_xml, data) #:nodoc:
+        uploadBody = ""
+        uploadBody << "--#{boundary}\r\n"
+        uploadBody << "Content-Type: application/atom+xml; charset=UTF-8\r\n\r\n"
+        uploadBody << video_xml
+        uploadBody << "\r\n--#{boundary}\r\n"
+        uploadBody << "Content-Type: #{@opts[:mime_type]}\r\nContent-Transfer-Encoding: binary\r\n\r\n"
+        uploadBody << data
+        uploadBody << "\r\n--#{boundary}--\r\n"
+      end
+
     end
   end
 end
