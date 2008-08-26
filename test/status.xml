@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<entry xmlns='http://www.w3.org/2005/Atom' xmlns:gml='http://www.opengis.net/gml'
+       xmlns:georss='http://www.georss.org/georss' xmlns:media='http://search.yahoo.com/mrss/'
+       xmlns:batch='http://schemas.google.com/gdata/batch' xmlns:yt='http://gdata.youtube.com/schemas/2007'
+       xmlns:gd='http://schemas.google.com/g/2005'>
+    <id>http://gdata.youtube.com/feeds/api/videos/QR1sWOVqxoM</id>
+    <published>2008-08-22T04:07:16.000-07:00</published>
+    <updated>2008-08-22T04:07:16.000-07:00</updated>
+    <app:control xmlns:app='http://purl.org/atom/app#'>
+	    <app:draft>yes</app:draft>
+	    <yt:state name='rejected' 
+	        reasonCode='tooLong'
+	        helpUrl='http://www.youtube.com/t/community_guidelines'>Video is too long.</yt:state>
+    </app:control>              
+    <category scheme='http://gdata.youtube.com/schemas/2007/keywords.cat' term='speechbox'/>
+    <category scheme='http://gdata.youtube.com/schemas/2007/categories.cat' term='Film' label='Film &amp; Animation'/>
+    <category scheme='http://schemas.google.com/g/2005#kind' term='http://gdata.youtube.com/schemas/2007#video'/>
+    <category scheme='http://gdata.youtube.com/schemas/2007/keywords.cat' term='wordia'/>
+    <title type='text'>discombobulate [08/22/2008 at 12:06PM]</title>
+    <content type='text'>To throw into a state of confusion; to befuddle or perplex</content>
+    <link rel='alternate' type='text/html' href='http://www.youtube.com/my_videos_edit?ns=1&amp;video_id=QR1sWOVqxoM'/>
+    <link rel='http://gdata.youtube.com/schemas/2007#video.responses' type='application/atom+xml'
+          href='http://gdata.youtube.com/feeds/api/videos/QR1sWOVqxoM/responses'/>
+    <link rel='http://gdata.youtube.com/schemas/2007#video.related' type='application/atom+xml'
+          href='http://gdata.youtube.com/feeds/api/videos/QR1sWOVqxoM/related'/>
+    <link rel='self' type='application/atom+xml'
+          href='http://gdata.youtube.com/feeds/api/users/speechboxmatt/uploads/QR1sWOVqxoM'/>
+    <author>
+        <name>speechboxmatt</name>
+        <uri>http://gdata.youtube.com/feeds/api/users/speechboxmatt</uri>
+    </author>
+    <media:group>
+        <media:title type='plain'>discombobulate [08/22/2008 at 12:06PM]</media:title>
+        <media:description type='plain'>To throw into a state of confusion; to befuddle or perplex</media:description>
+        <media:keywords>speechbox, wordia</media:keywords>
+        <yt:duration seconds='0'/>
+        <media:category label='Film &amp; Animation' scheme='http://gdata.youtube.com/schemas/2007/categories.cat'>
+            Film
+        </media:category>
+        <media:content url='http://www.youtube.com/v/QR1sWOVqxoM&amp;f=gdata_user_uploads'
+                       type='application/x-shockwave-flash' medium='video' isDefault='true' expression='full'
+                       yt:format='5'/>
+    </media:group>
+    <gd:comments>
+        <gd:feedLink href='http://gdata.youtube.com/feeds/api/videos/QR1sWOVqxoM/comments' countHint='0'/>
+    </gd:comments>
+</entry>
