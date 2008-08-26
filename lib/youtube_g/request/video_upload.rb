@@ -79,9 +79,13 @@ class YouTubeG
           response = upload.post(direct_upload_url, upload_body, upload_header)
           # todo parse this out also
           if response.code.to_i == 403                      
+            logger.error("ERROR: #{response.code}")
             raise AuthenticationError, response.body[/<TITLE>(.+)<\/TITLE>/, 1]
-          elsif response.code.to_i != 201    
+          elsif response.code.to_i != 201               
+            logger.error("ERROR: #{response.code}")
+            logger.debug("response: #{response.body}")
             upload_errors = YouTubeG::Parser::UploadErrorParser.new(response.body).parse
+            logger.debug("upload_errors: #{upload_errors}")
             raise UploadError, upload_errors.inspect
           end 
           return YouTubeG::Parser::VideoFeedParser.new(response.body).parse

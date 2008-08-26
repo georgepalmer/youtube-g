@@ -61,16 +61,34 @@ class YouTubeG
     # Retrieves a single YouTube video.
     #
     # === Parameters
-    #   vid<String>:: The ID or URL of the video that you'd like to retrieve.
+    #   vid<String>:: The ID or URL of the video that you'd like to retrieve. If your uncertain
+    # of the processed state use video_processed_by_youtube? first else this will fail.
     # 
     # === Returns
     # YouTubeG::Model::Video
     def video_by(vid)
-      video_id = vid =~ /^http/ ? vid : "http://gdata.youtube.com/feeds/videos/#{vid}"
+      video_id = vid =~ /^http/ ? vid : "http://gdata.youtube.com/feeds/api/videos/#{vid}"
       parser = YouTubeG::Parser::VideoFeedParser.new(video_id)
-      parser.parse
-    end
-    
+      parser.parse      
+    end                        
+
+    # Checks the status of a users uploaded video.
+    #
+    # === Parameters
+    #   status_url<String>:: The URL returned by YT when the video was uploaded e.g.
+    #
+    #   http://gdata.youtube.com/feeds/api/users/speechboxmatt/uploads/QR1sWOVqxoM
+    #
+    #   This is stored on upload as Video.status_url 
+    # === Returns
+    # Boolean   
+    def video_by_status_url(status_url)
+      parser = YouTubeG::Parser::VideoFeedParser.new(status_url)
+      video = parser.parse   
+      return video      
+    end    
+      
+         
     private
     
     def calculate_offset(page, per_page)

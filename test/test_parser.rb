@@ -4,7 +4,8 @@ require File.dirname(__FILE__) + '/../lib/youtube_g'
 class TestParser < Test::Unit::TestCase           
   
   UPLOAD_XML = File.new(File.dirname(__FILE__) +"/upload.xml")                        
-  SEARCH_XML = File.new(File.dirname(__FILE__) +"/search.xml")
+  SEARCH_XML = File.new(File.dirname(__FILE__) +"/search.xml")       
+  YOUTUBE_STATUS_XML = File.new(File.dirname(__FILE__) +"/status.xml")
              
   YT_VALIDATION = "yt:validation"      
   REQUIRED = "required"                                   
@@ -17,6 +18,10 @@ class TestParser < Test::Unit::TestCase
     
     @vf_parser = YouTubeG::Parser::VideoFeedParser.new(UPLOAD_XML.path)
     @vf_parser_result = @vf_parser.parse               
+    
+    # video feed error
+    @vfe_parser = YouTubeG::Parser::VideoFeedParser.new(YOUTUBE_STATUS_XML.path)
+    @vfe_parser_result = @vfe_parser.parse               
     
     @vfs_parser = YouTubeG::Parser::VideosFeedParser.new(SEARCH_XML.path)
     @vfs_parser_result = @vfs_parser.parse               
@@ -93,7 +98,9 @@ class TestParser < Test::Unit::TestCase
       assert_equal(320,video.thumbnails[3].width)
       assert_equal("00:00:07.500",video.thumbnails[3].time)
       
-      assert_equal("http://www.youtube.com/watch?v=32_mQ0PRT9I",video.player_url)
+      assert_equal("http://www.youtube.com/watch?v=32_mQ0PRT9I",video.player_url)  
+      
+      assert_equal("http://gdata.youtube.com/feeds/api/users/speechboxmatt/uploads/32_mQ0PRT9I",video.status_url);
     end
   end
  
@@ -143,6 +150,21 @@ class TestParser < Test::Unit::TestCase
     assert_equal("application/x-shockwave-flash",video.media_content[0].mime_type) 
   end
           
+  def test_video_feed_parser_with_error_status             
+    video = @vfe_parser_result
+    assert_instance_of(YouTubeG::Model::Video, video)       
+
+    assert_equal("http://gdata.youtube.com/feeds/api/videos/QR1sWOVqxoM",video.video_id)
+    
+    # App control - state of the upload
+    assert_equal("yes", video.app_control.draft)
+    assert_equal("rejected", video.app_control.state)             
+    # these populated only if errored
+    assert_equal("tooLong", video.app_control.reason)
+    assert_equal("http://www.youtube.com/t/community_guidelines", video.app_control.help_url)
+    assert_equal("Video is too long.", video.app_control.description)
+  end
+          
   def well_formed_errors_xml   
     errors_xml = ''
     errors_xml << "<?xml version='1.0' encoding='UTF-8'?>"
@@ -169,4 +191,4 @@ class TestParser < Test::Unit::TestCase
     errors_xml << "    <location type='xpath'>media:group/media:title/text()</location>"
     errors_xml << "</errors>"      
   end                        
-end
+end  

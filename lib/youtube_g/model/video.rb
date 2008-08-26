@@ -59,7 +59,10 @@ class YouTubeG
       # Used in video uploads only to check the state of the upload
       class AppControl < YouTubeG::Record
          attr_reader :draft
-         attr_reader :state
+         attr_reader :state 
+         attr_reader :reason 
+         attr_reader :help_url 
+         attr_reader :description 
       end
             
       # *Fixnum*:: Duration of a video in seconds.
@@ -112,6 +115,9 @@ class YouTubeG
       
       # *String*:: The link to watch the URL on YouTubes website.
       attr_reader :player_url
+      
+      # *String*:: The URL to check the processing status of the video at YT.
+      attr_reader :status_url
       
       # YouTubeG::Model::Rating:: Information about the videos rating.
       attr_reader :rating
@@ -187,6 +193,15 @@ EDOC
       #   String: Absolute URL for embedding video
       def embed_url
         @player_url.sub('watch?', '').sub('=', '/')          
+      end      
+      
+      # Has this vid been processed by YT?
+      #
+      # === Returns
+      #   Boolean
+      def processed?
+        return true if self.app_control == nil
+        return false if self.app_control.state.upcase == 'PROCESSING' || self.app_control.state.upcase == 'REJECTED' || self.app_control.state.upcase == 'FAILED'
       end
       
     end

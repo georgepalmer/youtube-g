@@ -68,7 +68,10 @@ class YouTubeG
         if app_control_element
           app_control = YouTubeG::Model::Video::AppControl.new(
                      :draft => app_control_element.elements["app:draft"].text,
-                     :state => app_control_element.elements["yt:state"].attributes["name"])
+                     :state => app_control_element.elements["yt:state"].attributes["name"],
+                     :reason => app_control_element.elements["yt:state"].attributes["reasonCode"],
+                     :help_url => app_control_element.elements["yt:state"].attributes["helpUrl"],
+                     :description => app_control_element.elements["yt:state"].text)                               
         end        
 
         # parse the category and keyword lists
@@ -136,7 +139,12 @@ class YouTubeG
         view_count = (el = entry.elements["yt:statistics"]) ? el.attributes["viewCount"].to_i : 0
 
         noembed = entry.elements["yt:noembed"] ? true : false
-        racy = entry.elements["media:rating"] ? true : false
+        racy = entry.elements["media:rating"] ? true : false   
+                       
+        status_url = nil
+        entry.elements.each("link") do |el|  
+          status_url = el.attributes["href"] if el.attributes["rel"] == "self"
+        end
 
         YouTubeG::Model::Video.new(
           :video_id => video_id,
@@ -156,7 +164,8 @@ class YouTubeG
           :rating => rating,
           :view_count => view_count,
           :noembed => noembed,
-          :racy => racy)
+          :racy => racy,
+          :status_url => status_url)
       end
 
       def parse_media_content (media_content_element) 
