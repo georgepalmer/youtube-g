@@ -1,6 +1,10 @@
 class YouTubeG
 
   module Upload
+    
+    CLIENT_LOGIN_HEADER = "GoogleLogin auth="
+    AUTH_SUB_HEADER = "AuthSub token=" 
+    
     class UploadError < Exception; end
     class AuthenticationError < Exception; end
 
@@ -16,8 +20,9 @@ class YouTubeG
       
       attr_accessor :auth_token
 
-      def initialize user, pass, dev_key, client_id = 'youtube_g', auth_token = nil
-        @user, @pass, @dev_key, @client_id, @auth_token = user, pass, dev_key, client_id, auth_token
+      def initialize user, pass, dev_key, client_id = 'youtube_g', auth_sub_token = nil
+        @user, @pass, @dev_key, @client_id, @auth_sub_token = user, pass, dev_key, client_id, auth_sub_token
+        @auth_token = @auth_sub_token != nil ? @auth_sub_token : nil
       end         
         
       # TODO merge this in with logger.rb or replace logger.rb
@@ -63,7 +68,7 @@ class YouTubeG
         upload_body = generate_upload_body(boundary, video_xml, data)
 
         upload_header = {
-        "Authorization"  => "GoogleLogin auth=#{derive_auth_token}",
+        "Authorization"  => get_auth_header,
         "X-GData-Client" => "#{@client_id}",
         "X-GData-Key"    => "key=#{@dev_key}",
         "Slug"           => "#{@opts[:filename]}",
@@ -74,6 +79,7 @@ class YouTubeG
 
         direct_upload_url = "/feeds/api/users/#{@user}/uploads"
         logger.debug("direct_upload_url [#{direct_upload_url}]")
+        logger.debug("upload_header [#{upload_header}]")
 
         Net::HTTP.start(base_url) do |upload|
           response = upload.post(direct_upload_url, upload_body, upload_header)
@@ -92,7 +98,15 @@ class YouTubeG
         end
 
       end   
-      
+       
+      def get_auth_header 
+        logger.debug("@auth_sub_token [#{@auth_sub_token}]") 
+        if @auth_sub_token
+          return YouTubeG::Upload::AUTH_SUB_HEADER+derive_auth_token
+        else
+          return YouTubeG::Upload::CLIENT_LOGIN_HEADER+derive_auth_token
+        end 
+      end  
 
       private
 

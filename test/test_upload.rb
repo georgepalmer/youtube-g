@@ -4,9 +4,13 @@ require File.dirname(__FILE__) + '/../lib/youtube_g'
 class TestClient < Test::Unit::TestCase
   
   def setup
-    @uploader = YouTubeG::Upload::VideoUpload.new("user","pswd","dev_key")               
+    @uploader = YouTubeG::Upload::VideoUpload.new(@user,@pswd,@dev_key)               
     @uploader.auth_token = "auth_token_for_testing" 
-    @response = nil
+    @response = nil   
+    @user = "user"
+    @pswd = "pswd"
+    @dev_key = "dev_key"
+    @client_id = "client_id"
   end
 
   def test_logger_still_active_without_rails_default       
@@ -18,10 +22,10 @@ class TestClient < Test::Unit::TestCase
   end 
   
   def test_passing_auth_token_in_constructor         
-    upload = YouTubeG::Upload::VideoUpload.new("user","pswd","dev_key")
+    upload = YouTubeG::Upload::VideoUpload.new(@user,@pswd,@dev_key)
     assert_nil upload.auth_token  
     
-    upload = YouTubeG::Upload::VideoUpload.new("user","pswd","dev_key","client_id", :test_token)
+    upload = YouTubeG::Upload::VideoUpload.new(@user,@pswd,@dev_key,@client_id, :test_token)
     assert_equal :test_token, upload.auth_token
   end   
                         
@@ -47,7 +51,28 @@ class TestClient < Test::Unit::TestCase
     assert_raise YouTubeG::Upload::UploadError do          
       response = @uploader.upload("a_file")
     end
-  end     
+  end    
+     
+  def test_get_auth_header_for_auth_sub                                           
+    token = "1234554321"
+    upload = YouTubeG::Upload::VideoUpload.new(@user,@pswd,@dev_key,@client_id, token)
+    assert_equal YouTubeG::Upload::AUTH_SUB_HEADER+token, upload.get_auth_header
+  end
+
+  def test_get_auth_header_for_client_login  
+    token = "1234554321"
+    # YouTubeG::Upload.module_eval do 
+    #   def derive_auth_token()
+    #     token
+    #   end                                
+    # end          
+    
+    # mock the result of derive_auth_token
+    upload = YouTubeG::Upload::VideoUpload.new(@user,@pswd,@dev_key,@client_id)
+    upload.auth_token = token                                   
+    assert_equal YouTubeG::Upload::CLIENT_LOGIN_HEADER+token, upload.get_auth_header
+  end
+   
               
   # stubs
   class Net::HTTPForbidden < Net::HTTPClientError # 403
