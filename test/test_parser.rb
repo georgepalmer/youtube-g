@@ -86,7 +86,8 @@ class TestParser < Test::Unit::TestCase
       assert_equal("application/x-shockwave-flash",video.media_content[0].mime_type) 
                            
       # Thumbs                     
-      assert_equal(4,video.thumbnails.length)
+      assert_equal(4,video.thumbnails.length)             
+ 
       # first thumb
       assert_equal("http://img.youtube.com/vi/32_mQ0PRT9I/2.jpg",video.thumbnails[0].url)
       assert_equal(97,video.thumbnails[0].height)

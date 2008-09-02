@@ -10,7 +10,10 @@ class YouTubeG
       # made available and allows looking them up by format code number.
       class Format
         @@formats = Hash.new
-
+        
+        attr_reader :format_code
+        attr_reader :name
+        
         # Instantiates a new video format object.
         #
         # == Parameters
