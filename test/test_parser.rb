@@ -6,6 +6,7 @@ class TestParser < Test::Unit::TestCase
   UPLOAD_XML = File.new(File.dirname(__FILE__) +"/upload.xml")                        
   SEARCH_XML = File.new(File.dirname(__FILE__) +"/search.xml")       
   YOUTUBE_STATUS_XML = File.new(File.dirname(__FILE__) +"/status.xml")
+  YOUTUBE_STATUS_COMPLETE_XML = File.new(File.dirname(__FILE__) +"/complete.xml")
              
   YT_VALIDATION = "yt:validation"      
   REQUIRED = "required"                                   
@@ -22,6 +23,10 @@ class TestParser < Test::Unit::TestCase
     # video feed error
     @vfe_parser = YouTubeG::Parser::VideoFeedParser.new(YOUTUBE_STATUS_XML.path)
     @vfe_parser_result = @vfe_parser.parse               
+
+    # upload complete
+    @vfc_parser = YouTubeG::Parser::VideoFeedParser.new(YOUTUBE_STATUS_COMPLETE_XML.path)
+    @vfc_parser_result = @vfc_parser.parse
     
     @vfs_parser = YouTubeG::Parser::VideosFeedParser.new(SEARCH_XML.path)
     @vfs_parser_result = @vfs_parser.parse               
@@ -164,6 +169,17 @@ class TestParser < Test::Unit::TestCase
     assert_equal("tooLong", video.app_control.reason)
     assert_equal("http://www.youtube.com/t/community_guidelines", video.app_control.help_url)
     assert_equal("Video is too long.", video.app_control.description)
+  end
+  
+  def test_video_feed_parser_with_complete_status
+    video = @vfc_parser_result
+    
+    assert_instance_of(YouTubeG::Model::Video, video)       
+
+    assert_equal("http://gdata.youtube.com/feeds/api/videos/_N97t50dld8",video.video_id)
+    assert_equal(false, video.app_control.nil?)
+    assert_equal(true, video.app_control.state.nil?)
+    
   end
           
   def well_formed_errors_xml   

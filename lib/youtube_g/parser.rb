@@ -65,13 +65,15 @@ class YouTubeG
                               
         app_control_element = entry.elements["app:control"]     
         app_control = nil
-        if app_control_element
+        if app_control_element && app_control_element.elements["yt:state"]  
           app_control = YouTubeG::Model::Video::AppControl.new(
                      :draft => app_control_element.elements["app:draft"].text,
                      :state => app_control_element.elements["yt:state"].attributes["name"],
                      :reason => app_control_element.elements["yt:state"].attributes["reasonCode"],
                      :help_url => app_control_element.elements["yt:state"].attributes["helpUrl"],
-                     :description => app_control_element.elements["yt:state"].text)                               
+                     :description => app_control_element.elements["yt:state"].text)
+        else
+          app_control = YouTubeG::Model::Video::AppControl.new({})
         end        
 
         # parse the category and keyword lists
