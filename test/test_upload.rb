@@ -15,9 +15,9 @@ class TestClient < Test::Unit::TestCase
 
   def test_logger_still_active_without_rails_default       
     if Object.const_defined?(@uploader.get_rails_default_logger_name)
-      assert_not_nil "Expected a #{@uploader.get_rails_default_logger_name}", @uploader.logger
+      assert_not_nil "Expected a #{@uploader.get_rails_default_logger_name}", @uploader.init_logger
     else
-      assert_not_nil "Expected a Logger.new", @uploader.logger            
+      assert_not_nil "Expected a Logger.new", @uploader.init_logger            
     end  
   end 
   

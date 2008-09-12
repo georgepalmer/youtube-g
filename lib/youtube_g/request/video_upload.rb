@@ -23,15 +23,20 @@ class YouTubeG
       def initialize user, pass, dev_key, client_id = 'youtube_g', auth_sub_token = nil
         @user, @pass, @dev_key, @client_id, @auth_sub_token = user, pass, dev_key, client_id, auth_sub_token
         @auth_token = @auth_sub_token != nil ? @auth_sub_token : nil
+        @logger = init_logger
       end         
         
       # TODO merge this in with logger.rb or replace logger.rb
-      def logger      
+      def init_logger      
         if not Object.const_defined?(get_rails_default_logger_name)
            Logger.new(STDOUT)
         else
            eval(get_rails_default_logger_name)
         end                                                                                                             
+      end
+      
+      def logger
+        @logger        
       end  
       
       def get_rails_default_logger_name
@@ -75,10 +80,8 @@ class YouTubeG
         "Content-Type"   => "multipart/related; boundary=#{boundary}",
         "Content-Length" => "#{upload_body.length}",
         }
-        logger.debug("upload_header [#{upload_header}]")
 
         direct_upload_url = "/feeds/api/users/#{@user}/uploads"
-        logger.debug("direct_upload_url [#{direct_upload_url}]")
         logger.debug("upload_header [#{upload_header}]")
 
         Net::HTTP.start(base_url) do |upload|
