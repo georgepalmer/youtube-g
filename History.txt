@@ -1,4 +1,5 @@
 == trunk    
+* Added update video method
 * Create a method to check the status of the uploaded video by status URL [msp]
 * Move network dependent tests to integration-test [msp]
 * Create a parser and a model for upload errors [msp]

@@ -43,6 +43,45 @@ class YouTubeG
          "RAILS_DEFAULT_LOGGER"
       end
 
+      # Updates a video in YouTube.  Requires:
+      #   :title
+      #   :description
+      #   :category
+      #   :keywords
+      # The following are optional attributes:
+      #   :private
+      def update(video_id, options)
+        @opts = options
+        
+        update_body = generate_request_body(boundary, video_xml)
+
+        update_header = {
+        "Authorization"  => get_auth_header,
+        "X-GData-Client" => "#{@client_id}",
+        "X-GData-Key"    => "key=#{@dev_key}",
+        "Content-Type"   => "multipart/related; boundary=#{boundary}",
+        "Content-Length" => "#{update_body.length}",
+        }
+
+        update_url = "/feeds/api/users/#{@user}/uploads/#{video_id}"
+        logger.debug("update header [#{update_header}]")
+
+        Net::HTTP.start(base_url) do |update|
+          response = update.put(update_url, update_body, update_header)
+          if response.code.to_i == 403
+            logger.error("ERROR: #{response.code}")
+            raise AuthenticationError, response.body[/<TITLE>(.+)<\/TITLE>/, 1]
+          elsif response.code.to_i != 200
+            logger.error("ERROR: #{response.code}")
+            logger.debug("response: #{response.body}")
+            update_errors = YouTubeG::Parser::UploadErrorParser.new(response.body).parse
+            logger.debug("upload_errors: #{update_errors}")
+            raise UploadError, update_errors.inspect
+          end 
+          return YouTubeG::Parser::VideoFeedParser.new(response.body).parse
+        end
+      end
+
       #
       # Upload "data" to youtube, where data is either an IO object or
       # raw file data.
@@ -70,7 +109,7 @@ class YouTubeG
                   :category => '',
                   :keywords => [] }.merge(opts)
 
-        upload_body = generate_upload_body(boundary, video_xml, data)
+        upload_body = generate_request_body(boundary, video_xml, data)
 
         upload_header = {
         "Authorization"  => get_auth_header,
@@ -84,7 +123,7 @@ class YouTubeG
         direct_upload_url = "/feeds/api/users/#{@user}/uploads"
         logger.debug("upload_header [#{upload_header}]")
 
-        Net::HTTP.start(base_url) do |upload|
+        Net::HTTP.start(upload_base_url) do |upload|
           response = upload.post(direct_upload_url, upload_body, upload_header)
           # todo parse this out also
           if response.code.to_i == 403                      
@@ -113,8 +152,12 @@ class YouTubeG
 
       private
 
-      def base_url #:nodoc:
-        "uploads.gdata.youtube.com"
+      def upload_base_url #:nodoc:
+        "uploads." + base_url
+      end
+      
+      def base_url
+        "gdata.youtube.com"
       end
 
       def boundary #:nodoc:
@@ -151,11 +194,11 @@ class YouTubeG
         video_xml << '</entry>'
       end
 
-      def generate_upload_body(boundary, video_xml, data) #:nodoc:
+      def generate_request_body(boundary, request_xml, data = "") #:nodoc:
         uploadBody = ""
         uploadBody << "--#{boundary}\r\n"
         uploadBody << "Content-Type: application/atom+xml; charset=UTF-8\r\n\r\n"
-        uploadBody << video_xml
+        uploadBody << request_xml
         uploadBody << "\r\n--#{boundary}\r\n"
         uploadBody << "Content-Type: #{@opts[:mime_type]}\r\nContent-Transfer-Encoding: binary\r\n\r\n"
         uploadBody << data
